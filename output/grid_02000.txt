@@ -1,0 +1,4 @@
+Krok: 2000
+Počet bodů: 374
+Počet bodů v Praze: 122, 32.62%
+Počet bodů ve vnitřní Praze: 12
