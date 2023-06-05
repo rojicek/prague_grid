@@ -21,7 +21,7 @@ df_points = pd.DataFrame({'ix': pd.Series(dtype='int'),
                           'longitude': pd.Series(dtype='float'),
                           'state': pd.Series(dtype='string')})
 
-square_distance = 500  # m
+square_distance = 3000  # m
 
 # vnejsi ctverec okolo Prahy
 outer_min_latitude = 49.9
