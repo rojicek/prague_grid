@@ -1,0 +1,4 @@
+Krok: 10000
+Počet bodů: 20
+Počet bodů v Praze: 5, 25.0%
+Počet bodů ve vnitřní Praze: 1
