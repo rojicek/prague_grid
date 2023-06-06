@@ -70,6 +70,7 @@ while actual_point.latitude <= outer_max_latitude:
                     if 'address' in r.raw.keys():
                         osm_sucessfully_read = True
                 except Exception:
+                    print('API failed, repeating')
                     time.sleep(2)
 
             df_points = pd.concat([df_points, pd.DataFrame([{'ix': ix, 'iy': iy,
