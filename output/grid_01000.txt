@@ -1,5 +1,0 @@
-Krok: 1000
-Počet bodů: 1476
-Počet bodů v Praze: 493, 33.4%
-Počet bodů ve vnitřní Praze: 63
-Doba výpočtu: 805.0s

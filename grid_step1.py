@@ -22,7 +22,7 @@ df_points = pd.DataFrame({'ix': pd.Series(dtype='int'),
                           'longitude': pd.Series(dtype='float'),
                           'state': pd.Series(dtype='string')})
 
-square_distance = 200  # m
+square_distance = 5000  # m
 
 # vnejsi ctverec okolo Prahy
 outer_min_latitude = 49.9
@@ -74,6 +74,7 @@ while actual_point.latitude <= outer_max_latitude:
                                                              'latitude': actual_point.latitude,
                                                              'longitude': actual_point.longitude,
                                                              'state': 'Praha'}])])
+            # jen pro report
             inner_count = inner_count + 1
 
         else:  # need check OSM
@@ -125,6 +126,19 @@ df_points.to_hdf(file_name_hdf, key='data')
 
 print(f'konec: {datetime.datetime.now()}')
 
+# integrity test
+max_ix = df_points['ix'].max()
+max_iy = df_points['iy'].max()
+add_info = ''
+
+if len(np.unique(df_points[['ix', 'iy']], axis=0)) != len(df_points):
+    print('INDEXY NEJSOU UNIKATNI!!')
+    add_info = f'{add_info}\nindexy nejsou unikatni'
+
+if (max_ix+1) * (max_iy+1) != len(df_points):
+    print('NESEDI POCET BODU!!')
+    add_info = f'{add_info}\nnesedi pocet bodu: {max_ix+1} * {max_iy+1} == {len(df_points)}'
+
 # zapis info
 with open(file_name_txt, 'w', encoding='utf-8') as f:
     f.write(f'Krok: {square_distance}\n')
@@ -132,5 +146,6 @@ with open(file_name_txt, 'w', encoding='utf-8') as f:
     f.write(f'Počet bodů v Praze: {total_points_in_prague}, {round(100 * total_points_in_prague / total_points, 2)}%\n')
     f.write(f'Počet bodů ve vnitřní Praze: {inner_count}\n')
     f.write(f'Doba výpočtu: {round(time.time()-total_start, 0)}s\n')
+    f.write(f'{add_info}')
 
 print('zapsano!')
