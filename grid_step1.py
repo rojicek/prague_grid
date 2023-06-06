@@ -72,9 +72,6 @@ while actual_point.latitude <= outer_max_latitude:
                 except Exception:
                     time.sleep(2)
 
-
-
-
             df_points = pd.concat([df_points, pd.DataFrame([{'ix': ix, 'iy': iy,
                                                              'latitude': actual_point.latitude,
                                                              'longitude': actual_point.longitude,
