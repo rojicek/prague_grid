@@ -1,0 +1,4 @@
+Krok: 3333
+Počet bodů: 143
+Počet bodů v Praze: 45, 31.47%
+Počet bodů ve vnitřní Praze: 6

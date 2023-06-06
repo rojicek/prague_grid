@@ -7,6 +7,7 @@ import geopy
 import math
 import os
 import pathlib
+import time
 
 
 import gpxpy
@@ -21,7 +22,7 @@ df_points = pd.DataFrame({'ix': pd.Series(dtype='int'),
                           'longitude': pd.Series(dtype='float'),
                           'state': pd.Series(dtype='string')})
 
-square_distance = 3000  # m
+square_distance = 200  # m
 
 # vnejsi ctverec okolo Prahy
 outer_min_latitude = 49.9
@@ -62,7 +63,18 @@ while actual_point.latitude <= outer_max_latitude:
             inner_count = inner_count + 1
 
         else:  # need check OSM
-            r = geo_locator.reverse(actual_point)
+            osm_sucessfully_read = False
+            while not osm_sucessfully_read:
+                try:
+                    r = geo_locator.reverse(actual_point)
+                    if 'address' in r.raw.keys():
+                        osm_sucessfully_read = True
+                except Exception:
+                    time.sleep(2)
+
+
+
+
             df_points = pd.concat([df_points, pd.DataFrame([{'ix': ix, 'iy': iy,
                                                              'latitude': actual_point.latitude,
                                                              'longitude': actual_point.longitude,
