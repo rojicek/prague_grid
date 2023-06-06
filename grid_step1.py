@@ -22,7 +22,7 @@ df_points = pd.DataFrame({'ix': pd.Series(dtype='int'),
                           'longitude': pd.Series(dtype='float'),
                           'state': pd.Series(dtype='string')})
 
-square_distance = 3000  # m
+square_distance = 200  # m
 
 # vnejsi ctverec okolo Prahy
 outer_min_latitude = 49.9
@@ -44,6 +44,7 @@ iy = 0
 
 total_start = time.time()
 last_time = total_start
+print(f'start: {datetime.datetime.now()}')
 
 # zacnu v SW rohu (lon/lat jsou minimalni)
 actual_point = geopy.Point(latitude=outer_min_latitude, longitude=outer_min_longitude)
@@ -52,14 +53,14 @@ while actual_point.latitude <= outer_max_latitude:
 
     t_elapsed = time.time() - last_time
     t_elapsed_total = time.time() - total_start
-    todo_percent = 1-(outer_max_latitude - actual_point.latitude) / (outer_max_latitude - outer_min_latitude)
-    if todo_percent > 0:
-        eta = datetime.datetime.now() + datetime.timedelta(seconds=t_elapsed_total / todo_percent)
+    done_percent = 1-(outer_max_latitude - actual_point.latitude) / (outer_max_latitude - outer_min_latitude)
+    if done_percent > 0:
+        eta = datetime.datetime.now() + datetime.timedelta(seconds=(1-done_percent) * t_elapsed_total / done_percent)
     else:
         eta = 'NA'
 
     last_time = time.time()
-    print(f'hotovo: {round(100*todo_percent, 1)}%, posledni: {round(t_elapsed, 1)}s, eta: {eta}')
+    print(f'hotovo: {round(100*done_percent, 1)}%, posledni: {round(t_elapsed, 1)}s, eta: {eta}')
 
     actual_point.longitude = outer_min_longitude
     while actual_point.longitude <= outer_max_longitude:
@@ -130,5 +131,6 @@ with open(file_name_txt, 'w', encoding='utf-8') as f:
     f.write(f'Počet bodů: {total_points}\n')
     f.write(f'Počet bodů v Praze: {total_points_in_prague}, {round(100 * total_points_in_prague / total_points, 2)}%\n')
     f.write(f'Počet bodů ve vnitřní Praze: {inner_count}\n')
+    f.write(f'Doba výpočtu: {round(time.time()-total_start, 0)}s\n')
 
 print('zapsano!')
