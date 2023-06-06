@@ -22,7 +22,7 @@ df_points = pd.DataFrame({'ix': pd.Series(dtype='int'),
                           'longitude': pd.Series(dtype='float'),
                           'state': pd.Series(dtype='string')})
 
-square_distance = 5000  # m
+square_distance = 500  # m
 
 # vnejsi ctverec okolo Prahy
 outer_min_latitude = 49.9
@@ -34,7 +34,7 @@ outer_max_longitude = 14.8
 inner_min_latitude = 50.03
 inner_min_longitude = 14.32
 inner_max_latitude = 50.11
-inner_max_longitude = 14.42
+inner_max_longitude = 14.63
 
 inner_count = 0
 
@@ -47,62 +47,62 @@ last_time = total_start
 print(f'start: {datetime.datetime.now()}')
 
 # zacnu v SW rohu (lon/lat jsou minimalni)
-actual_point = geopy.Point(latitude=outer_min_latitude, longitude=outer_min_longitude)
+sw_corner = geopy.Point(latitude=outer_min_latitude, longitude=outer_min_longitude)
 
-while actual_point.latitude <= outer_max_latitude:
+se_corner = geopy.Point(latitude=outer_min_latitude, longitude=outer_max_longitude)
+nw_corner = geopy.Point(latitude=outer_max_latitude, longitude=outer_min_longitude)
 
+latitude_dist_iy = int(geopy.distance.distance(sw_corner, nw_corner).meters / square_distance) + 1 # index y
+longitude_dist_ix = int (geopy.distance.distance(sw_corner, se_corner).meters / square_distance) + 1 # index x
+
+
+for ix in range(0,longitude_dist_ix):
+
+    # mezi smyckami jen tisk casu
     t_elapsed = time.time() - last_time
     t_elapsed_total = time.time() - total_start
-    done_percent = 1-(outer_max_latitude - actual_point.latitude) / (outer_max_latitude - outer_min_latitude)
+    done_percent = ix/longitude_dist_ix
     if done_percent > 0:
         eta = datetime.datetime.now() + datetime.timedelta(seconds=(1-done_percent) * t_elapsed_total / done_percent)
     else:
         eta = 'NA'
 
     last_time = time.time()
-    print(f'hotovo: {round(100*done_percent, 1)}%, posledni: {round(t_elapsed, 1)}s, eta: {eta}')
+    print(f'hotovo: {round(100 * done_percent, 1)}%, posledni: {round(t_elapsed, 1)}s, eta: {eta}')
 
-    actual_point.longitude = outer_min_longitude
-    while actual_point.longitude <= outer_max_longitude:
+    for iy in range(0, latitude_dist_iy):
 
-        # calc other rect points
-        if inner_min_latitude < actual_point.latitude < inner_max_latitude and \
-                inner_min_longitude < actual_point.longitude < inner_max_longitude:
+        # na vychod
+        actual_point_1 = geopy.distance.distance(meters=ix*square_distance).destination(sw_corner, bearing=90)
+        # a na sever
+        actual_point = geopy.distance.distance(meters=iy * square_distance).destination(actual_point_1, bearing=0)
 
+        if (inner_min_latitude < actual_point.latitude < inner_max_latitude and \
+                inner_min_longitude < actual_point.longitude < inner_max_longitude):
             # vnitrni Praha
-            df_points = pd.concat([df_points, pd.DataFrame([{'ix': ix, 'iy': iy,
-                                                             'latitude': actual_point.latitude,
-                                                             'longitude': actual_point.longitude,
-                                                             'state': 'Praha'}])])
+            known_state = 'Praha'
+
             # jen pro report
             inner_count = inner_count + 1
 
         else:  # need check OSM
             osm_sucessfully_read = False
+            known_state = 'nevim'
             while not osm_sucessfully_read:
                 try:
                     r = geo_locator.reverse(actual_point)
                     if 'address' in r.raw.keys():
+                        known_state = str(r.raw['address']['state'])
                         osm_sucessfully_read = True
                 except Exception:
                     print('API failed, repeating')
                     time.sleep(2)
 
-            df_points = pd.concat([df_points, pd.DataFrame([{'ix': ix, 'iy': iy,
-                                                             'latitude': actual_point.latitude,
-                                                             'longitude': actual_point.longitude,
-                                                             'state': str(r.raw['address']['state'])}])])
+        df_points = pd.concat([df_points, pd.DataFrame([{'ix': ix, 'iy': iy,
+                                                         'latitude': actual_point.latitude,
+                                                         'longitude': actual_point.longitude,
+                                                         'state': known_state}])])
 
-            # move point east
-        actual_point = geopy.distance.distance(meters=square_distance).destination(actual_point, bearing=90)
-        # posunu index
-        ix = ix + 1
-
-    # move point north
-    actual_point = geopy.distance.distance(meters=square_distance).destination(actual_point, bearing=0)
-    # posunu index a resetuji index x
-    iy = iy + 1
-    ix = 0
 
 df_points.reset_index(inplace=True, drop=True)
 
