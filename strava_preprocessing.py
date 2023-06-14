@@ -13,18 +13,28 @@ import os
 
 import pandas as pd
 
-#gpx_file = open(r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\output\Besr23.gpx', 'r')
+# https://pypi.org/project/fit2gpx/
+
 fit_folder_path = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\rides'
 
-strava_conv = StravaConverter(dir_in=fit_folder_path)
+# output folder for gpx files
+gpx_folder_path = os.path.join(fit_folder_path, 'activities_gpx')
+
+
+strava_conv = StravaConverter(dir_in=fit_folder_path, dir_out=gpx_folder_path)
 
 # Step 2: Unzip the zipped files
 strava_conv.unzip_activities()
 
-# Step 3: Add metadata to existing GPX files
+# Step 3: Add metadata to existing GPX files and copy gpx files
 strava_conv.add_metadata_to_gpx()
 
+print('start actual conversion')
 # Step 4: Convert FIT to GPX
 strava_conv.strava_fit_to_gpx()
+
+#todo: chybi tcx soubory z 2013/2014 ... chybi Rakousko, Lipot
+# v Praze to ale zadny novy ctverec nebude
+# 65 tcx souboru
 
 print('konec')
