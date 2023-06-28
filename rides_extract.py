@@ -14,11 +14,11 @@ import os
 import pandas as pd
 
 root_folder = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\rides'
-fit_folder_path = os.path.join(root_folder, 'activities_gpx')
+source_gpx_folder_path = os.path.join(root_folder, 'activities_gpx')
 js_folder_path = os.path.join(root_folder, 'activities_js')
 df_folder_path = os.path.join(root_folder, 'activities_df')
 
-
+source_gpx_folder_path = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\rides\activities_tcx\gpx'
 flag_create_js_data = True
 
 # key input parameter - jak daleko max muzou byt body od sebe
@@ -33,7 +33,7 @@ def process_gpx(gpx_file):
     d_orig = {}
     i_orig = 0
 
-    df = pd.DataFrame(columns=['latitude', 'longitude'])
+    df_i = pd.DataFrame(columns=['latitude', 'longitude'])
 
     with open(gpx_file, 'r') as gpx_file_handler:
         gpx = gpxpy.parse(gpx_file_handler)
@@ -61,7 +61,7 @@ def process_gpx(gpx_file):
                                 interpolated_longitute = prev_point.longitude + alpha * diff_longitude
 
                                 # dvakrat totez
-                                df = pd.concat([df, pd.DataFrame(
+                                df_i = pd.concat([df_i, pd.DataFrame(
                                     [{'latitude': interpolated_latitude, 'longitude': interpolated_longitute}])])
                                 if flag_create_js_data:
                                     d[i] = f"{interpolated_latitude}N,{interpolated_longitute}E"
@@ -70,8 +70,8 @@ def process_gpx(gpx_file):
                     # print ('*')
                     # pridej actual_point bod (casto bude 2x, ale to je jedno) - protoze to bude dalsi nasledujici bod
                     # 2 duplicitni zapisy
-                    df = pd.concat(
-                        [df, pd.DataFrame([{'latitude': actual_point.latitude, 'longitude': actual_point.longitude}])])
+                    df_i = pd.concat(
+                        [df_i, pd.DataFrame([{'latitude': actual_point.latitude, 'longitude': actual_point.longitude}])])
                     if flag_create_js_data:
                         d[i] = f"{actual_point.latitude}N,{actual_point.longitude}E"
                         i = i + 1
@@ -84,16 +84,16 @@ def process_gpx(gpx_file):
                     # print (prev_point)
                     # print ('--------------------------------')
 
-    df.reset_index(drop=True, inplace=True)
-    return df, d, d_orig
+    df_i.reset_index(drop=True, inplace=True)
+    return df_i, d, d_orig
 
 
-for root, dirs, files in os.walk(fit_folder_path):
+for root, dirs, files in os.walk(source_gpx_folder_path):
     for file_name in files:
         full_path = os.path.join(root,file_name)
         print(full_path)
 
-        df, d, d_orig = process_gpx (full_path)
+        df, d, d_orig = process_gpx(full_path)
 
         # write 3 files
         # store df
