@@ -1,21 +1,32 @@
+# prague grid
+import datetime
+import json
 import pandas as pd
-df1 = 0
-df2 = 0
-
-if False:
-    data1 = [10, 20, 30, 40, 50, 60]
-    df1 = pd.DataFrame(data1, columns=['Numbers'])
-
-    data2 = [100, 200, 300, 400, 500, 600]
-    df2 = pd.DataFrame(data2, columns=['cisla'])
+import numpy as np
+import geopy
+import math
+import os
+import pathlib
+import time
 
 
+import gpxpy
+import gpxpy.gpx
+from geopy.distance import geodesic
 
-    df1.to_hdf('soubor.h5', key='d1')
-    df2.to_hdf('soubor.h5', key='d2')
+geo_locator = geopy.Nominatim(user_agent='prague_grid')
 
-df1 = pd.read_hdf('soubor.h5', key='d1')
-df2 = pd.read_hdf('soubor.h5', key='d2')
+# spejchar
+# test_point = geopy.Point(latitude=50.0966533, longitude=14.4081531)
 
-print(df1)
-print(df2)
+# badeniho
+test_point = geopy.Point(latitude=50.0965089, longitude=14.4082631)
+r = geo_locator.reverse(test_point)
+
+print(f"{r.raw['address']['road']}")
+print(f"{r.raw['address']['suburb']}")
+print(f"{r.raw['address']['city']}")
+# 'address': {
+#     'road': 'Badeniho',
+#     'suburb': 'Holešovice',
+#     'city': 'Hlavní město Praha',

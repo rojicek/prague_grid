@@ -7,6 +7,7 @@ import numpy as np
 import gpxpy
 import geopy
 from geopy.distance import geodesic
+from bs4 import BeautifulSoup
 
 import os
 
@@ -14,11 +15,16 @@ import os
 import pandas as pd
 
 root_folder = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\rides'
-source_gpx_folder_path = os.path.join(root_folder, 'activities_gpx')
-js_folder_path = os.path.join(root_folder, 'activities_js')
-df_folder_path = os.path.join(root_folder, 'activities_df')
+js_folder_path = os.path.join(root_folder, 'processed_activities_js')
+df_folder_path = os.path.join(root_folder, 'processed_activities_df')
 
-source_gpx_folder_path = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\rides\activities_tcx\gpx'
+# test that folders exists and are empty
+for folder in [js_folder_path, df_folder_path]:
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+
+source_gpx_folder_path = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\from_strava\activities_processed_gpx'
 flag_create_js_data = True
 
 # key input parameter - jak daleko max muzou byt body od sebe
@@ -89,33 +95,49 @@ def process_gpx(gpx_file):
 
 
 for root, dirs, files in os.walk(source_gpx_folder_path):
-    for file_name in files:
-        full_path = os.path.join(root,file_name)
-        print(full_path)
+    for i, file_name in enumerate(files):
 
-        df, d, d_orig = process_gpx(full_path)
+        df_file_path = os.path.join(df_folder_path, file_name + '.h5')
 
-        # write 3 files
-        # store df
-        df_file_path = os.path.join(df_folder_path, file_name+'.h5')
-        df.to_hdf(df_file_path, key='data')
-        if flag_create_js_data:
-            jsorig_file_path = os.path.join(js_folder_path, file_name + '.orig.js')
-            with open(jsorig_file_path, 'w') as fo:
-                fo.write(str(d_orig))
+        # test, jestli uz nemam vysledky
+        if not os.path.isfile(df_file_path):
+            full_source_path = os.path.join(root, file_name)
 
-            jsrich_file_path = os.path.join(js_folder_path, file_name + '.rich.js')
-            with open(jsrich_file_path, 'w') as fr:
-                fr.write(str(d))
+            # test jestli to neni virtualni jizda
+            with open(full_source_path, 'r') as f:
+                xml_data = f.read()
+
+            # Passing the stored data inside
+            # the beautifulsoup parser, storing
+            # the returned object
+            beautiful_data = BeautifulSoup(xml_data, "xml")
+            ride_tag = beautiful_data.find_all('type')[0]
+            if ride_tag.get_text().lower() == 'virtual ride':
+                # nezpracovavam virtualni jizdy
+                print(f'virtual {file_name} [{i}/{len(files)}]')
+                continue
 
 
+            print(f'{file_name} [{i}/{len(files)}]')
+
+            df, d, d_orig = process_gpx(full_source_path)
+
+            # write 3 files
+            # store df
+            df.to_hdf(df_file_path, key='data')
+
+            # store js (mene dulezite)
+            if flag_create_js_data:
+                jsorig_file_path = os.path.join(js_folder_path, file_name + '.orig.js')
+                with open(jsorig_file_path, 'w') as fo:
+                    fo.write(str(d_orig))
+
+                jsrich_file_path = os.path.join(js_folder_path, file_name + '.rich.js')
+                with open(jsrich_file_path, 'w') as fr:
+                    fr.write(str(d))
+
+        else:
+            print(f'uz mam {file_name} [{i}/{len(files)}]')
 
 
-# loop over gpx files
-# if flag_create_js_data:
-#     with open(r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\output\besr-edited.js.data', 'w') as f:
-#         f.write(str(d))
-#     with open(r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\output\besr-orig.js.data', 'w') as f:
-#         f.write(str(d_orig))
-#
 print('konec')
