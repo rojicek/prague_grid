@@ -18,9 +18,9 @@ import pandas as pd
 
 # https://pypi.org/project/fit2gpx/
 
-fit_folder_path = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\from_strava'
+fit_folder_path = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\from_strava_2023-07-29'
 
-# tcx input files
+# tcx input files (pro ostatni soubory neni treba - zna strukturu exportu ze stravy)
 tcx_folder_path = os.path.join(fit_folder_path, 'activities')
 # output folder for gpx files
 gpx_folder_path = os.path.join(fit_folder_path, 'activities_processed_gpx')
