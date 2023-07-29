@@ -22,7 +22,8 @@ df_points = pd.DataFrame({'ix': pd.Series(dtype='int'),
                           'longitude': pd.Series(dtype='float'),
                           'state': pd.Series(dtype='string')})
 
-square_distance = 500  # m
+# velikost ctverce gridu
+square_distance = 200  # m
 
 # vnejsi ctverec okolo Prahy
 outer_min_latitude = 49.9
@@ -31,11 +32,13 @@ outer_max_latitude = 50.2
 outer_max_longitude = 14.8
 
 # ctverec urcite uvnitr Prahy
+# jen pro zrychleni
 inner_min_latitude = 50.03
 inner_min_longitude = 14.32
 inner_max_latitude = 50.11
 inner_max_longitude = 14.63
 
+# pocet bodu uvnitr Prahy
 inner_count = 0
 
 # indexy v mem gridu abych snaze nasel souseda
@@ -46,7 +49,7 @@ total_start = time.time()
 last_time = total_start
 print(f'start: {datetime.datetime.now()}')
 
-# zacnu v SW rohu (lon/lat jsou minimalni)
+# zacnu v SW rohu (lon/lat jsou minima)
 sw_corner = geopy.Point(latitude=outer_min_latitude, longitude=outer_min_longitude)
 
 se_corner = geopy.Point(latitude=outer_min_latitude, longitude=outer_max_longitude)

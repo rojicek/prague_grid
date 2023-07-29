@@ -7,7 +7,8 @@ zpracovane soubory ulozi do podadresare, typicky activities_processed_gpx
 2 - process_rides
 trva par hodin, ale muze navazovat (diva se na uz zpracovane soubory)
 vstupem jsou predchozi gpx
-vystupem 2 adresare
+vystupem 2 adresare (typicky v rides)
 processed_activities_df : data frames s jednotlivymi body, ktere jsou zhustene na ~10m (nebo jak je parametr)
 processed_ctivities_js : javascript pro vlozeni do zobrazeni na mapy.cz
 ignoruji virtualni jizdy, takze pocet df nemusi sedet
+

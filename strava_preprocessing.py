@@ -1,20 +1,11 @@
-# nacte archiv se Stravy a udela ze vsecho gpx soubory
+# nacte archiv se Stravy a udela ze vseho gpx soubory
 
-import os
-import pathlib
-import time
-import numpy as np
-# import gpxpy
-# import geopy
-# from geopy.distance import geodesic
-# from fit2gpx import Converter
+
 from fit2gpx import StravaConverter
 import os
 
 
 import mytcx2gpx
-
-import pandas as pd
 
 # https://pypi.org/project/fit2gpx/
 
