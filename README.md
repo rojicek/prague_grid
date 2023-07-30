@@ -12,3 +12,5 @@ processed_activities_df : data frames s jednotlivymi body, ktere jsou zhustene n
 processed_ctivities_js : javascript pro vlozeni do zobrazeni na mapy.cz
 ignoruji virtualni jizdy, takze pocet df nemusi sedet
 
+3- create grid
+nezavisle na predchozich, jednorazova akce - udela df s body s informaci o kraji: Praha/Stredni Cechy (aby se snaze hledalo)

@@ -23,7 +23,7 @@ df_points = pd.DataFrame({'ix': pd.Series(dtype='int'),
                           'state': pd.Series(dtype='string')})
 
 # velikost ctverce gridu
-square_distance = 200  # m
+square_distance = 2000  # m
 
 # vnejsi ctverec okolo Prahy
 outer_min_latitude = 49.9
