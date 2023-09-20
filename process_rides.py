@@ -22,7 +22,8 @@ for folder in [js_folder_path, df_folder_path]:
         os.makedirs(folder)
 
 
-source_gpx_folder_path = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\from_strava_2023-07-29\activities_processed_gpx'
+source_gpx_folder_path = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\from_strava_2023-09-20\activities_processed_gpx'
+
 flag_create_js_data = True
 
 # key input parameter - jak daleko max muzou byt body od sebe
