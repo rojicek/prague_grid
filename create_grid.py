@@ -23,7 +23,7 @@ df_points = pd.DataFrame({'ix': pd.Series(dtype='int'),
                           'state': pd.Series(dtype='string')})
 
 # velikost ctverce gridu
-square_distance = 2000  # m
+square_distance = 3000  # m
 
 # vnejsi ctverec okolo Prahy
 outer_min_latitude = 49.9
@@ -116,6 +116,8 @@ print(f'Krok: {square_distance}')
 print(f'Počet bodů: {total_points}')
 print(f'Počet bodů v Praze: {total_points_in_prague}, {round(100 * total_points_in_prague / total_points, 2)}%')
 print(f'Počet bodů ve vnitřní Praze: {inner_count}')
+
+# post processing - zahodim vse, co neni v Praze
 
 # /content/drive/My Drive/dev/Praha_grid/
 root_folder = os.path.join(pathlib.Path(__file__).parent.resolve(), 'output')
