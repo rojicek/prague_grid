@@ -13,8 +13,35 @@ rides_folder = r'c:\Users\jiri\Documents\dev_code\Prague_grid\prague_grid\rides\
 
 
 def check_inside(point, grid):
-    for i
-    return True
+    for sw_point_index in range(len(grid)):
+        # chapu jako jihozapadni roh (min lan, min lot)
+        ix = grid.loc[sw_point_index, 'ix']
+        iy = grid.loc[sw_point_index, 'iy']
+
+        sw_point = grid[(grid['ix'] == ix + 0) & (grid['iy'] == iy + 0)]
+        se_point = grid[(grid['ix'] == ix + 1) & (grid['iy'] == iy + 0)]
+        ne_point = grid[(grid['ix'] == ix + 1) & (grid['iy'] == iy + 1)]
+        nw_point = grid[(grid['ix'] == ix + 0) & (grid['iy'] == iy + 1)]
+
+        all_ok = True
+
+        all_ok = all_ok and (sw_point['state'].values[0].lower() == 'praha')
+        all_ok = all_ok and (se_point['state'].values[0].lower() == 'praha')
+        all_ok = all_ok and (ne_point['state'].values[0].lower() == 'praha')
+        all_ok = all_ok and (nw_point['state'].values[0].lower() == 'praha')
+
+        # tohle neni uplne presne, protoze to nemusi byt ctverek podel souradnic
+        min_latitude = min(sw_point['latitude'].values[0], se_point['latitude'].values[0])
+        max_latitude = min(nw_point['latitude'].values[0], ne_point['latitude'].values[0])
+
+        min_longitude = min(sw_point['longitude'].values[0], nw_point['longitude'].values[0])
+        max_longitude = min(se_point['longitude'].values[0], ne_point['longitude'].values[0])
+
+        if min_latitude <= point.latitude <= max_latitude and min_longitude <= point.longitude <= max_longitude:
+            return True
+        else:
+            return False
+
 
 
 # try to open squares_file
@@ -41,7 +68,7 @@ for foldername, subfolders, filenames in os.walk(rides_folder):
 
         ride_df = pd.DataFrame(pd.read_hdf(ride_file_path))
         for index, one_point in ride_df.iterrows():
-            i = check_inside(one_point, squares_df)
+            point_in = check_inside(one_point, squares_df)
 
             x = 0
 

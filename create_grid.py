@@ -55,11 +55,11 @@ sw_corner = geopy.Point(latitude=outer_min_latitude, longitude=outer_min_longitu
 se_corner = geopy.Point(latitude=outer_min_latitude, longitude=outer_max_longitude)
 nw_corner = geopy.Point(latitude=outer_max_latitude, longitude=outer_min_longitude)
 
-latitude_dist_iy = int(geopy.distance.distance(sw_corner, nw_corner).meters / square_distance) + 1 # index y
-longitude_dist_ix = int (geopy.distance.distance(sw_corner, se_corner).meters / square_distance) + 1 # index x
+latitude_dist_iy = int(geopy.distance.distance(sw_corner, nw_corner).meters / square_distance) + 1  # index y
+longitude_dist_ix = int(geopy.distance.distance(sw_corner, se_corner).meters / square_distance) + 1  # index x
 
 
-for ix in range(0,longitude_dist_ix):
+for ix in range(0, longitude_dist_ix):
 
     # mezi smyckami jen tisk casu
     t_elapsed = time.time() - last_time
