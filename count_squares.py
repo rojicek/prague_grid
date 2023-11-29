@@ -23,24 +23,33 @@ def check_inside(point, grid):
         ne_point = grid[(grid['ix'] == ix + 1) & (grid['iy'] == iy + 1)]
         nw_point = grid[(grid['ix'] == ix + 0) & (grid['iy'] == iy + 1)]
 
-        all_ok = True
+        # vsechny body musi existovat
+        if len(se_point) > 0 and len(ne_point) > 0 and len(nw_point) > 0:
 
-        all_ok = all_ok and (sw_point['state'].values[0].lower() == 'praha')
-        all_ok = all_ok and (se_point['state'].values[0].lower() == 'praha')
-        all_ok = all_ok and (ne_point['state'].values[0].lower() == 'praha')
-        all_ok = all_ok and (nw_point['state'].values[0].lower() == 'praha')
+            all_ok = True
 
-        # tohle neni uplne presne, protoze to nemusi byt ctverek podel souradnic
-        min_latitude = min(sw_point['latitude'].values[0], se_point['latitude'].values[0])
-        max_latitude = min(nw_point['latitude'].values[0], ne_point['latitude'].values[0])
+            # musi byt v Praze
+            all_ok = all_ok and (sw_point['state'].values[0].lower() == 'praha')
+            all_ok = all_ok and (se_point['state'].values[0].lower() == 'praha')
+            all_ok = all_ok and (ne_point['state'].values[0].lower() == 'praha')
+            all_ok = all_ok and (nw_point['state'].values[0].lower() == 'praha')
 
-        min_longitude = min(sw_point['longitude'].values[0], nw_point['longitude'].values[0])
-        max_longitude = min(se_point['longitude'].values[0], ne_point['longitude'].values[0])
+            # speed up
+            if not all_ok:
+                continue
 
-        if min_latitude <= point.latitude <= max_latitude and min_longitude <= point.longitude <= max_longitude:
-            return True
-        else:
-            return False
+            # tohle neni uplne presne, protoze to nemusi byt ctverek podel souradnic
+            min_latitude = min(sw_point['latitude'].values[0], se_point['latitude'].values[0])
+            max_latitude = min(nw_point['latitude'].values[0], ne_point['latitude'].values[0])
+
+            min_longitude = min(sw_point['longitude'].values[0], nw_point['longitude'].values[0])
+            max_longitude = min(se_point['longitude'].values[0], ne_point['longitude'].values[0])
+
+            if min_latitude <= point.latitude <= max_latitude and min_longitude <= point.longitude <= max_longitude:
+                # nasel jsem ctverec, kde je ten bod uvnitr
+                return ix, iy
+
+    return -1, -1
 
 
 
@@ -68,7 +77,7 @@ for foldername, subfolders, filenames in os.walk(rides_folder):
 
         ride_df = pd.DataFrame(pd.read_hdf(ride_file_path))
         for index, one_point in ride_df.iterrows():
-            point_in = check_inside(one_point, squares_df)
+            ix_in, iy_in = check_inside(one_point, squares_df)
 
             x = 0
 
